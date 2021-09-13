@@ -6,7 +6,7 @@ metadata:
 spec:
   template:
     metadata:
-      lables:
+      labels:
         app: csharp-sample-api
       annotations:
         sidecar.istio.io/inject: "false" # 禁用istio sidecar注入
