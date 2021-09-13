@@ -17,6 +17,9 @@ spec:
     spec:
       containers:
         - image: yangliangbin/csharp-sample-api:latest # The URL to the image of the app
+          ports:
+            name: http1
+            containerPort: 80
           env:
             - name: TARGET # The environment variable printed out by the sample app
               value: "Go Sample v1"
