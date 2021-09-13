@@ -5,7 +5,7 @@ metadata:
   namespace: knative-backend # The namespace the app will use
 spec:
   template:
-    metadate:
+    metadata:
       lables:
         app: csharp-sample-api
       annotations:
