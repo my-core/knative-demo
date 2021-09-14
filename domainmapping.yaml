@@ -1,0 +1,10 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: DomainMapping
+metadata:
+  name: testkn.huanyingzq.com
+  namespace: knative-backend
+spec:
+  ref:
+    name: csharp-sample-api
+    kind: Service
+    apiVersion: serving.knative.dev/v1
