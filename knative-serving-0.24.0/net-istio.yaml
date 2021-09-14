@@ -287,7 +287,7 @@ spec:
           # This is the Go import path for the binary that is containerized
           # and substituted here.
           # image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:41f58d7e8319e473dbf27dec3d329b631f03ec0899c98ba2dd3d3166a6fb7a42
-          images: docker.io/cytsaiaf/knative-net-istio-controller_0.25.0
+          image: docker.io/cytsaiaf/knative-net-istio-controller_0.25.0
           resources:
             requests:
               cpu: 30m
