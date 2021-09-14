@@ -1,0 +1,25 @@
+apiVersion: serving.knative.dev/v1 # Current version of Knative
+kind: Service
+metadata:
+  name: csharp-sample-api # The name of the app
+  namespace: knative-backend # The namespace the app will use
+spec:
+  template:
+    metadata:
+      labels:
+        app: csharp-sample-api
+      annotations:
+        sidecar.istio.io/inject: "false" # 禁用istio sidecar注入
+        enable-scale-to-zero: "ture" #启用缩放为0，默认true
+        autoscaling.knative.dev/target: "2" #设置每个pod并发请求数,默认100
+        # autoscaling.knative.dev/minScale: "0" #设置最小保留实例数为1,scale-to-zero=true默认0,false默认1
+        autoscaling.knative.dev/maxScale: "5" #设置最小保留实例数为5,默认无限
+    spec:
+      containers:
+        - image: yangliangbin/csharp-sample-api:latest # The URL to the image of the app
+          ports:
+            - name: http1
+              containerPort: 80
+          env:
+            - name: TARGET # The environment variable printed out by the sample app
+              value: "Go Sample v1"
