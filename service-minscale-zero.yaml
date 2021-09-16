@@ -6,6 +6,7 @@ metadata:
 spec:
   template:
     metadata:
+      name: csharp-sample-api
       labels:
         app: csharp-sample-api
       annotations:
