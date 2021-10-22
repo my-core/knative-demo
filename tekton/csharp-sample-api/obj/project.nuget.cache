@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "qtBsVLSNhnXxP7FNO+U6VDCFrYnkNodI2TZtUxsNpAsnIvY1GaVKGKabW2WKCOKzBnSSWHPJqD3wKLhSODaDrA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\XUNZHI\\source\\repos\\csharp-sample-api\\csharp-sample-api\\csharp-sample-api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\XUNZHI\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.10.14\\microsoft.visualstudio.azure.containers.tools.targets.1.10.14.nupkg.sha512"
+  ],
+  "logs": []
+}

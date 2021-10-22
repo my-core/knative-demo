@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: tekton-pipeline-run-
+  namespace: tekton-pipelines
+spec:
+  pipelineRef:
+    name: tekton-pipeline #要执行的 pipelline
+  resources:
+    - name: git-source # clone下来的代码会放到以git-source命名的文件夹下
+      resourceRef:
+        name: tekton-git-resource # git信息，指定源地址、版本等信息
+  params:
+    - name: pathToContext #参数 构建上下文的目录
+      value: ""
+    - name: pathToYamlFile #参数 输出yaml文件
+      value: "deployment.yaml"
+    - name: imageUrl #生成镜像名
+      value: "harbor.niuguwang.com/gmg_dapeng/csharp-sample-api"
+    - name: imageTag #生成镜像的tag
+      value: "v1.0"
+  serviceAccountName: pipeline-account #  服务账户名，提供身份信息

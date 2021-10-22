@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: csharp-sample-api
+  namespace: istio-backend
+  labels:
+    app: csharp-sample-api
+    version: v1
+    HealthChecks: enabled
+spec:
+  selector: # 选择器，与下边的Deployment的标签一致，用于筛选Deployment
+    app: csharp-sample-api
+  type: ClusterIP # service类型
+  ports: # 端口，与Dockerfile里暴露的端口一致
+    - port: 80
+      name: http
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csharp-sample-api
+  namespace: istio-backend
+  labels:
+    app: csharp-sample-api
+    version: v1
+spec:
+  replicas: 1 # pod部署数量
+  selector:
+    matchLabels:
+      app: csharp-sample-api
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: csharp-sample-api
+        version: v1
+    spec:
+      containers:
+      - name: csharp-sample-api
+        image: __IMAGE__ # 镜像地址，tekeon在更新deployment.yaml文件时，会把__IMAGE__替换成真实的镜像地址
+        env: # 环境变量，这里加载的是k8s里设置的dotnet-env ConfigMap
+          - name: DOTNET_ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: dotnet-env
+                key: DOTNET_ENVIRONMENT
+          - name: ASPNETCORE_ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: dotnet-env
+                key: DOTNET_ENVIRONMENT
+        ports: # 端口，与Dockerfile里暴露的端口一致
+        - containerPort: 80
+        lifecycle:
+          postStart: # 映射日志目录
+            exec:
+              command:
+                - /bin/sh
+                - '-c'
+                - >-
+                  mkdir -p /home/mount/${HOSTNAME} /home/admin/logs 
+                  && ln -s /home/mount/${HOSTNAME} /home/admin/logs/news.huanyingzq.com 
+                  && echo ${HOSTNAME}       
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+          requests:
+            cpu: "0.05"
+            memory: 0.5Gi
+        volumeMounts: # 挂载卷
+          - name: log-volume
+            mountPath: /home/mount
+      volumes:
+      - name: log-volume # 挂载日志目录，每个节点会有filebeat收集指定目录下的日志文件
+        hostPath:
+          path: /home/admin/logs
+          type: DirectoryOrCreate
+      imagePullSecrets: # harbor 密钥凭证，取k8s里的harbor-niuguwang Secret
+        - name: gitlab-registry

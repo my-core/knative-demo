@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: images-secret
+  namespace: tekton-pipelines
+  annotations:
+    tekton.dev/docker-0: harbor.niuguwang.com
+type: kubernetes.io/basic-auth
+stringData:
+  username: chendapeng
+  password: qGS8nz1BsJIY
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline-account
+  namespace: tekton-pipelines
+secrets:
+- name: images-secret
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kube-api-secret
+  namespace: tekton-pipelines
+  annotations:
+    kubernetes.io/service-account.name: pipeline-account
+type: kubernetes.io/service-account-token
+
+---
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pipeline-role
+  namespace: tekton-pipelines
+rules: #指定 tekton-pipelines 命名空间下的权限
+- apiGroups: [""]
+  resources: ["services","serviceaccounts"]
+  verbs: ["get", "create", "update", "patch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "create", "update", "patch"]
+- apiGroups: ["serving.knative.dev"]
+  resources: ["services"]
+  verbs: ["get", "create", "update", "patch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pipeline-role-binding
+  namespace: tekton-pipelines
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pipeline-role
+subjects:
+- kind: ServiceAccount
+  name: pipeline-account
+
+---
+#在 istio-backend命名空间创建 ClusterRoleBinding，使得tekton-pipelines命名空间的pipeline-account账户可以在istio-backend空间有部署资源权限
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pipeline-role-binding
+  namespace: istio-backend 
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: pipeline-account
+  namespace: tekton-pipelines
